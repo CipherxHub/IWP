@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practical 4 - ISBN Validator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 36px;
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      border: 1px solid #334155;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 6px;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 18px;
+      color: white;
+      letter-spacing: 2px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: 'Courier New', monospace;
+    }
+
+    input[type="text"]:focus { border-color: #38bdf8; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .validate-btn { background: #0284c7; color: white; }
+    .clear-btn    { background: #334155; color: #94a3b8; }
+
+    button:hover { opacity: 0.85; }
+
+    /* Result Box */
+    .result-box {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      display: none;
+    }
+
+    .result-box.valid {
+      background: #052e16;
+      border: 2px solid #16a34a;
+      color: #4ade80;
+      display: block;
+    }
+
+    .result-box.invalid {
+      background: #2d0707;
+      border: 2px solid #dc2626;
+      color: #f87171;
+      display: block;
+    }
+
+    .result-icon { font-size: 24px; margin-right: 8px; }
+
+    /* ISBN Type Badges */
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-10  { background: #1e40af; color: #93c5fd; }
+    .badge-13  { background: #5b21b6; color: #c4b5fd; }
+    .badge-err { background: #7f1d1d; color: #fca5a5; }
+
+    /* Examples Section */
+    .examples {
+      margin-top: 24px;
+      border-top: 1px solid #334155;
+      padding-top: 18px;
+    }
+
+    .examples h3 {
+      font-size: 13px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .example-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .example-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #1e293b;
+      transition: border-color 0.15s;
+    }
+
+    .example-item:hover { border-color: #38bdf8; }
+
+    .example-item .isbn-val {
+      font-family: monospace;
+      font-size: 14px;
+      color: #38bdf8;
+      letter-spacing: 1px;
+    }
+
+    .example-item .isbn-tag {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    /* Breakdown Table */
+    .breakdown {
+      margin-top: 12px;
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #94a3b8;
+      display: none;
+    }
+
+    .breakdown.show { display: block; }
+    .breakdown strong { color: #e2e8f0; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-title">📚 ISBN Validator</div>
+  <div class="card-sub">Validates ISBN-10 and ISBN-13 using Regular Expressions</div>
+
+  <label for="isbnInput">Enter ISBN Number</label>
+  <input
+    type="text"
+    id="isbnInput"
+    placeholder="e.g. 978-3-16-148410-0"
+    maxlength="17"
+  />
+
+  <div class="btn-row">
+    <button class="validate-btn" onclick="validateISBN()">✅ Validate</button>
+    <button class="clear-btn"    onclick="clearAll()">🗑 Clear</button>
+  </div>
+
+  <div class="result-box" id="resultBox"></div>
+  <div class="breakdown"  id="breakdown"></div>
+
+  <!-- Example ISBNs to click -->
+  <div class="examples">
+    <h3>📋 Try these examples (click to fill)</h3>
+    <div class="example-list">
+      <div class="example-item" onclick="fillISBN('978-3-16-148410-0')">
+        <span class="isbn-val">978-3-16-148410-0</span>
+        <span class="isbn-tag">ISBN-13 ✔️</span>
+      </div>
+      <div class="example-item" onclick="fillISBN('0-306-40615-2')">
+        <span class="isbn-val">0-306-40615-2</span>
+        <span class="isbn-tag">ISBN-10 ✔️</span>
+      </div>
+      <div class="example-item" onclick="fillISBN('0306406152')">
+        <span class="isbn-val">0306406152</span>
+        <span class="isbn-tag">ISBN-10 (no hyphens) ✔️</span>
+      </div>
+      <div class="example-item" onclick="fillISBN('9780306406157')">
+        <span class="isbn-val">9780306406157</span>
+        <span class="isbn-tag">ISBN-13 (no hyphens) ✔️</span>
+      </div>
+      <div class="example-item" onclick="fillISBN('123-456-789')">
+        <span class="isbn-val">123-456-789</span>
+        <span class="isbn-tag">Invalid ❌</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =====================================================
+  // ISBN VALIDATION USING REGULAR EXPRESSIONS
+  // =====================================================
+
+  /*
+    ISBN-10 Format:
+      - 10 digits (last can be X = 10)
+      - Optional hyphens between groups
+      - Checksum: sum of (digit × position) mod 11 = 0
+
+    ISBN-13 Format:
+      - 13 digits
+      - Optional hyphens
+      - Checksum: alternating weights 1 and 3, sum mod 10 = 0
+  */
+
+  // Regex Patterns
+  const ISBN10_PATTERN = /^(?:\d[- ]?){9}[\dX]$/i;
+  const ISBN13_PATTERN = /^(?:\d[- ]?){12}\d$/;
+
+  function validateISBN() {
+    const raw = document.getElementById('isbnInput').value.trim();
+    const resultBox = document.getElementById('resultBox');
+    const breakdownDiv = document.getElementById('breakdown');
+
+    if (!raw) {
+      showResult('invalid', '⚠️', 'Please enter an ISBN number first.');
+      breakdownDiv.classList.remove('show');
+      return;
+    }
+
+    // Remove hyphens and spaces for calculation
+    const clean = raw.replace(/[-\s]/g, '');
+
+    let type = null;
+    let checksumValid = false;
+
+    // ---- Check ISBN-10 ----
+    if (ISBN10_PATTERN.test(raw)) {
+      type = 'ISBN-10';
+      checksumValid = checkISBN10(clean);
+    }
+    // ---- Check ISBN-13 ----
+    else if (ISBN13_PATTERN.test(raw)) {
+      type = 'ISBN-13';
+      checksumValid = checkISBN13(clean);
+    }
+
+    // ---- Show Result ----
+    if (type && checksumValid) {
+      showResult('valid', '✅', `Valid ${type} number!`);
+      showBreakdown(clean, type);
+    } else if (type && !checksumValid) {
+      showResult('invalid', '❌', `Format looks like ${type} but checksum is incorrect.`);
+      showBreakdown(clean, type, false);
+    } else {
+      showResult('invalid', '❌', 'Invalid format. ISBN must be 10 or 13 digits (hyphens optional).');
+      breakdownDiv.classList.remove('show');
+    }
+  }
+
+  // ===== ISBN-10 Checksum =====
+  // Sum of: d1×1 + d2×2 + ... + d10×10 must be divisible by 11
+  function checkISBN10(clean) {
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(clean[i]) * (i + 1);
+    }
+    const last = clean[9].toUpperCase() === 'X' ? 10 : parseInt(clean[9]);
+    sum += last * 10;
+    return sum % 11 === 0;
+  }
+
+  // ===== ISBN-13 Checksum =====
+  // Alternating weights: 1,3,1,3...  sum mod 10 must = 0
+  function checkISBN13(clean) {
+    let sum = 0;
+    for (let i = 0; i < 12; i++) {
+      sum += parseInt(clean[i]) * (i % 2 === 0 ? 1 : 3);
+    }
+    const checkDigit = (10 - (sum % 10)) % 10;
+    return checkDigit === parseInt(clean[12]);
+  }
+
+  function showResult(type, icon, message) {
+    const box = document.getElementById('resultBox');
+    box.className = 'result-box ' + type;
+    box.innerHTML = `<span class="result-icon">${icon}</span>${message}`;
+  }
+
+  function showBreakdown(clean, type, valid = true) {
+    const div = document.getElementById('breakdown');
+    let html = `<strong>Breakdown:</strong><br>`;
+    html += `Cleaned digits: <strong style="color:#38bdf8">${clean}</strong><br>`;
+    html += `Type detected: <strong>${type}</strong><br>`;
+    html += `Check digit: <strong>${clean[clean.length - 1]}</strong><br>`;
+    html += `Checksum: <strong style="color:${valid ? '#4ade80' : '#f87171'}">${valid ? 'Passed ✓' : 'Failed ✗'}</strong>`;
+    div.innerHTML = html;
+    div.classList.add('show');
+  }
+
+  function fillISBN(val) {
+    document.getElementById('isbnInput').value = val;
+    validateISBN();
+  }
+
+  function clearAll() {
+    document.getElementById('isbnInput').value = '';
+    const box = document.getElementById('resultBox');
+    box.className = 'result-box';
+    box.innerHTML = '';
+    document.getElementById('breakdown').classList.remove('show');
+  }
+
+  // Allow pressing Enter to validate
+  document.getElementById('isbnInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') validateISBN();
+  });
+</script>
+
+</body>
+</html>

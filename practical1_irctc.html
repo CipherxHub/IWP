@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IRCTC - Book Train Tickets Online</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, #003580, #0057b8);
+      color: white;
+      padding: 12px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      font-size: 36px;
+    }
+
+    .logo-text h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .logo-text p {
+      font-size: 11px;
+      color: #a0c4ff;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 14px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    nav a:hover { background: rgba(255,255,255,0.2); }
+
+    .login-btn {
+      background: #ff6b00 !important;
+      font-weight: 600;
+    }
+
+    /* ===== HERO BANNER ===== */
+    .hero {
+      background: linear-gradient(135deg, #003580 60%, #0057b8);
+      color: white;
+      text-align: center;
+      padding: 40px 20px 60px;
+    }
+
+    .hero h2 { font-size: 28px; margin-bottom: 8px; }
+    .hero p  { font-size: 14px; color: #a0c4ff; margin-bottom: 24px; }
+
+    /* ===== BOOKING FORM ===== */
+    .booking-card {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      max-width: 700px;
+      margin: 0 auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      background: #003580;
+      color: white;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select {
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 15px;
+      transition: border 0.2s;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #003580;
+    }
+
+    .swap-btn {
+      background: none;
+      border: 2px solid #003580;
+      color: #003580;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      align-self: center;
+      margin-top: 18px;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .swap-btn:hover { background: #003580; color: white; }
+
+    .search-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #ff6b00, #ff9500);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+
+    .search-btn:hover { opacity: 0.9; }
+
+    /* ===== QUICK LINKS ===== */
+    .quick-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding: 30px 40px;
+      flex-wrap: wrap;
+    }
+
+    .quick-card {
+      background: white;
+      border-radius: 10px;
+      padding: 18px 22px;
+      text-align: center;
+      min-width: 130px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .quick-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    .quick-card .icon { font-size: 28px; margin-bottom: 8px; }
+    .quick-card p    { font-size: 13px; font-weight: 500; }
+
+    /* ===== ANNOUNCEMENTS ===== */
+    .announcements {
+      background: #fff8e1;
+      border-left: 4px solid #ff9800;
+      margin: 0 40px 20px;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #5d4037;
+    }
+
+    .announcements strong { color: #e65100; }
+
+    /* ===== TRAIN CLASSES INFO ===== */
+    .classes-section {
+      padding: 20px 40px 40px;
+    }
+
+    .classes-section h3 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #003580;
+      border-bottom: 2px solid #003580;
+      display: inline-block;
+      padding-bottom: 4px;
+    }
+
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .class-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      border-top: 3px solid;
+    }
+
+    .class-card:nth-child(1) { border-color: #e53935; }
+    .class-card:nth-child(2) { border-color: #8e24aa; }
+    .class-card:nth-child(3) { border-color: #1e88e5; }
+    .class-card:nth-child(4) { border-color: #43a047; }
+    .class-card:nth-child(5) { border-color: #fb8c00; }
+
+    .class-card .code { font-size: 22px; font-weight: 700; }
+    .class-card .name { font-size: 12px; color: #777; margin-top: 4px; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #1a1a2e;
+      color: #aaa;
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    footer a { color: #a0c4ff; text-decoration: none; margin: 0 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🚂</div>
+      <div class="logo-text">
+        <h1>IRCTC</h1>
+        <p>Indian Railway Catering and Tourism Corporation</p>
+      </div>
+    </div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Trains</a>
+      <a href="#">Tourism</a>
+      <a href="#">Catering</a>
+      <a href="#" class="login-btn">Login / Register</a>
+    </nav>
+  </header>
+
+  <!-- HERO + BOOKING FORM -->
+  <section class="hero">
+    <h2>🚄 Book Your Train Journey</h2>
+    <p>Fast, Easy & Secure Railway Ticket Booking</p>
+
+    <div class="booking-card">
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active">🎫 Book Ticket</div>
+        <div class="tab">📋 PNR Status</div>
+        <div class="tab">🕐 Train Schedule</div>
+        <div class="tab">🗺️ Seat Map</div>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>From Station</label>
+          <input type="text" placeholder="e.g. New Delhi (NDLS)" value="New Delhi (NDLS)" />
+        </div>
+
+        <button class="swap-btn" title="Swap Stations">⇄</button>
+
+        <div class="form-group">
+          <label>To Station</label>
+          <input type="text" placeholder="e.g. Mumbai Central (BCT)" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date of Journey</label>
+          <input type="date" id="journeyDate" />
+        </div>
+        <div class="form-group">
+          <label>Class</label>
+          <select>
+            <option>All Classes</option>
+            <option>1A - First AC</option>
+            <option>2A - Second AC</option>
+            <option>3A - Third AC</option>
+            <option>SL - Sleeper</option>
+            <option>2S - Second Sitting</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Quota</label>
+          <select>
+            <option>General (GN)</option>
+            <option>Ladies (LD)</option>
+            <option>Senior Citizen (SS)</option>
+            <option>Tatkal (TK)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Passengers</label>
+          <input type="number" value="1" min="1" max="6" />
+        </div>
+      </div>
+
+      <button class="search-btn">🔍 Search Trains</button>
+    </div>
+  </section>
+
+  <!-- ANNOUNCEMENTS -->
+  <div class="announcements">
+    <strong>📢 Notice:</strong> Tatkal booking opens 1 day before the journey date at 10:00 AM. 
+    | Special trains for festive season announced. 
+    | <strong>New:</strong> UPI payments now available for all bookings.
+  </div>
+
+  <!-- QUICK LINKS -->
+  <div class="quick-links">
+    <a class="quick-card" href="#">
+      <div class="icon">📱</div>
+      <p>IRCTC App</p>
+    </a>
+    <a class="quick-card" href="#">
+      <div class="icon">🏨</div>
+      <p>Hotels</p>
+    </a>
+    <a class="quick-card" href="#">
+      <div class="icon">✈️</div>
+      <p>Flights</p>
+    </a>
+    <a class="quick-card" href="#">
+      <div class="icon">🍽️</div>
+      <p>Food Order</p>
+    </a>
+    <a class="quick-card" href="#">
+      <div class="icon">🗓️</div>
+      <p>Tatkal Book</p>
+    </a>
+    <a class="quick-card" href="#">
+      <div class="icon">❌</div>
+      <p>Cancel Ticket</p>
+    </a>
+    <a class="quick-card" href="#">
+      <div class="icon">🔁</div>
+      <p>Refund Status</p>
+    </a>
+  </div>
+
+  <!-- TRAIN CLASSES INFO -->
+  <section class="classes-section">
+    <h3>Train Classes Available</h3>
+    <div class="classes-grid">
+      <div class="class-card">
+        <div class="code">1A</div>
+        <div class="name">First Class AC</div>
+      </div>
+      <div class="class-card">
+        <div class="code">2A</div>
+        <div class="name">Second AC</div>
+      </div>
+      <div class="class-card">
+        <div class="code">3A</div>
+        <div class="name">Third AC</div>
+      </div>
+      <div class="class-card">
+        <div class="code">SL</div>
+        <div class="name">Sleeper Class</div>
+      </div>
+      <div class="class-card">
+        <div class="code">2S</div>
+        <div class="name">Second Sitting</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2024 IRCTC - Indian Railway Catering and Tourism Corporation Ltd.</p>
+    <p style="margin-top:8px;">
+      <a href="#">About Us</a> | 
+      <a href="#">Terms & Conditions</a> | 
+      <a href="#">Privacy Policy</a> | 
+      <a href="#">Contact Us</a> | 
+      <a href="#">Grievance</a>
+    </p>
+  </footer>
+
+  <script>
+    // Set today's date as default for journey date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('journeyDate').value = today;
+
+    // Tab switching logic
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Swap station button
+    document.querySelector('.swap-btn').addEventListener('click', function () {
+      const inputs = document.querySelectorAll('.form-group input[type="text"]');
+      const temp = inputs[0].value;
+      inputs[0].value = inputs[1].value;
+      inputs[1].value = temp;
+    });
+  </script>
+
+</body>
+</html>

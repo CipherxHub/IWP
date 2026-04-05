@@ -1,0 +1,58 @@
+<!-- ============================================================
+     Practical 10 - Student Details XML + XSD Schema Validation
+     ============================================================
+     File: students.xml
+     Root element: student_details
+     Each student has: reg no (attribute), name (first+last grouped),
+     department, address, phone (XXX-XXXX format)
+     ============================================================ -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<student_details xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:noNamespaceSchemaLocation="students.xsd">
+
+  <!-- Student 1 -->
+  <student reg_no="VIT2023001">
+    <name>
+      <first_name>Himalaya</first_name>
+      <last_name>Yadav</last_name>
+    </name>
+    <department>Computer Science and Engineering</department>
+    <address>Block C, VIT Bhopal Campus, Bhopal, MP - 466114</address>
+    <phone>987-1234</phone>    <!-- Format: XXX-XXXX -->
+  </student>
+
+  <!-- Student 2 -->
+  <student reg_no="VIT2023002">
+    <name>
+      <first_name>Ananya</first_name>
+      <last_name>Sharma</last_name>
+    </name>
+    <department>Electronics and Communication Engineering</department>
+    <address>Hostel Block A, VIT Bhopal Campus, Bhopal, MP - 466114</address>
+    <phone>876-5432</phone>
+  </student>
+
+  <!-- Student 3 -->
+  <student reg_no="VIT2023003">
+    <name>
+      <first_name>Rohit</first_name>
+      <last_name>Verma</last_name>
+    </name>
+    <department>Mechanical Engineering</department>
+    <address>Flat 12, Shanti Nagar, Indore, MP - 452001</address>
+    <phone>765-9876</phone>
+  </student>
+
+  <!-- Student 4 -->
+  <student reg_no="VIT2023004">
+    <name>
+      <first_name>Priya</first_name>
+      <last_name>Singh</last_name>
+    </name>
+    <department>Civil Engineering</department>
+    <address>House 7, Green Colony, Bhopal, MP - 462001</address>
+    <phone>654-3210</phone>
+  </student>
+
+</student_details>

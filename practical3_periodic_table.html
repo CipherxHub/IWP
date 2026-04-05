@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practical 3 - Periodic Table (CSS)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0d0d;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      margin: 0;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start; /* keeps title on top */
+      min-height: 100vh;
+    }
+
+    /* Wrapper */
+    .table-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;  /* centers horizontally */
+      margin-top: 20px;
+    }
+    /* ===== COLOR LEGEND ===== */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #ccc;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* ===== PERIODIC TABLE GRID ===== */
+    .table-wrap {
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .ptable {
+      display: grid;
+      grid-template-columns: repeat(18, 52px);
+      grid-template-rows: repeat(10, 56px);
+      gap: 3px;
+      margin: 0 auto; /* fallback centering */
+     }
+
+    /* ===== ELEMENT CELL ===== */
+    .element {
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+
+    .element:hover {
+      transform: scale(1.25);
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(255,255,255,0.4);
+    }
+
+    .atomic-num {
+      font-size: 7px;
+      color: rgba(255,255,255,0.7);
+      position: absolute;
+      top: 3px;
+      left: 4px;
+    }
+
+    .symbol {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .element-name {
+      font-size: 6px;
+      color: rgba(255,255,255,0.8);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* ===== CATEGORIES (Colors) ===== */
+    .alkali-metal         { background: #c62828; }
+    .alkaline-earth       { background: #e65100; }
+    .transition-metal     { background: #1565c0; }
+    .post-transition      { background: #4a148c; }
+    .metalloid            { background: #00695c; }
+    .nonmetal             { background: #558b2f; }
+    .noble-gas            { background: #37474f; }
+    .lanthanide           { background: #6a1b9a; }
+    .actinide             { background: #880e4f; }
+    .halogen              { background: #2e7d32; }
+    .hydrogen             { background: #0277bd; }
+
+    /* ===== POPUP INFO PANEL ===== */
+    .popup {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1a1a2e;
+      border: 2px solid #00d4ff;
+      border-radius: 12px;
+      padding: 16px 20px;
+      min-width: 220px;
+      display: none;
+      z-index: 999;
+    }
+
+    .popup.show { display: block; }
+
+    .popup .sym-big {
+      font-size: 42px;
+      font-weight: 900;
+      color: #00d4ff;
+    }
+
+    .popup .info-name { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .popup .info-row  { font-size: 12px; color: #aaa; margin: 3px 0; }
+    .popup .info-row span { color: white; }
+  </style>
+</head>
+<body>
+
+  <h1>⚗️ Periodic Table of Elements</h1>
+  <p class="subtitle">Hover or click on any element to see details</p>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#0277bd"></div>Hydrogen</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c62828"></div>Alkali Metal</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e65100"></div>Alkaline Earth</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div>Transition Metal</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4a148c"></div>Post-transition</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#00695c"></div>Metalloid</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#558b2f"></div>Nonmetal</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2e7d32"></div>Halogen</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#37474f"></div>Noble Gas</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6a1b9a"></div>Lanthanide</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#880e4f"></div>Actinide</div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="ptable" id="ptable"></div>
+  </div>
+
+  <!-- Info Popup -->
+  <div class="popup" id="popup">
+    <div class="sym-big" id="pop-sym">H</div>
+    <div class="info-name" id="pop-name">Hydrogen</div>
+    <div class="info-row">Atomic No: <span id="pop-num">1</span></div>
+    <div class="info-row">Mass: <span id="pop-mass">1.008</span></div>
+    <div class="info-row">Category: <span id="pop-cat">Nonmetal</span></div>
+    <div class="info-row">Period: <span id="pop-period">1</span> | Group: <span id="pop-group">1</span></div>
+  </div>
+
+<script>
+const elements = [];
+
+// Helper function to push elements
+function add(num, sym, name, mass, cat, row, col) {
+  elements.push({ num, sym, name, mass, cat, row, col });
+}
+
+/* =========================
+   FULL PERIODIC TABLE DATA
+========================= */
+
+// Period 1
+add(1,"H","Hydrogen","1.008","nonmetal",1,1);
+add(2,"He","Helium","4.0026","noble-gas",1,18);
+
+// Period 2
+add(3,"Li","Lithium","6.94","alkali-metal",2,1);
+add(4,"Be","Beryllium","9.01","alkaline-earth",2,2);
+add(5,"B","Boron","10.81","metalloid",2,13);
+add(6,"C","Carbon","12.01","nonmetal",2,14);
+add(7,"N","Nitrogen","14.01","nonmetal",2,15);
+add(8,"O","Oxygen","16.00","nonmetal",2,16);
+add(9,"F","Fluorine","19.00","halogen",2,17);
+add(10,"Ne","Neon","20.18","noble-gas",2,18);
+
+// Period 3
+add(11,"Na","Sodium","22.99","alkali-metal",3,1);
+add(12,"Mg","Magnesium","24.31","alkaline-earth",3,2);
+add(13,"Al","Aluminium","26.98","post-transition",3,13);
+add(14,"Si","Silicon","28.09","metalloid",3,14);
+add(15,"P","Phosphorus","30.97","nonmetal",3,15);
+add(16,"S","Sulfur","32.06","nonmetal",3,16);
+add(17,"Cl","Chlorine","35.45","halogen",3,17);
+add(18,"Ar","Argon","39.95","noble-gas",3,18);
+
+// Period 4 (FULL)
+const period4 = [
+"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
+"Ga","Ge","As","Se","Br","Kr"
+];
+period4.forEach((sym,i)=>{
+  const data = [
+    [21,"Scandium"],[22,"Titanium"],[23,"Vanadium"],[24,"Chromium"],
+    [25,"Manganese"],[26,"Iron"],[27,"Cobalt"],[28,"Nickel"],
+    [29,"Copper"],[30,"Zinc"],[31,"Gallium"],[32,"Germanium"],
+    [33,"Arsenic"],[34,"Selenium"],[35,"Bromine"],[36,"Krypton"]
+  ];
+  add(data[i][0],sym,data[i][1],"...",
+      i<10?"transition-metal":
+      i===10?"post-transition":
+      i<=12?"metalloid":
+      i===13?"nonmetal":
+      i===14?"halogen":"noble-gas",
+      4,i+3);
+});
+
+// Period 5
+add(37,"Rb","Rubidium","85.47","alkali-metal",5,1);
+add(38,"Sr","Strontium","87.62","alkaline-earth",5,2);
+
+// Transition metals (39–48)
+const p5 = ["Y","Zr","Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd"];
+p5.forEach((s,i)=>add(39+i,s,"...", "...","transition-metal",5,i+3));
+
+// Post + others
+add(49,"In","Indium","...","post-transition",5,13);
+add(50,"Sn","Tin","...","post-transition",5,14);
+add(51,"Sb","Antimony","...","metalloid",5,15);
+add(52,"Te","Tellurium","...","metalloid",5,16);
+add(53,"I","Iodine","...","halogen",5,17);
+add(54,"Xe","Xenon","...","noble-gas",5,18);
+
+// Period 6
+add(55,"Cs","Cesium","...","alkali-metal",6,1);
+add(56,"Ba","Barium","...","alkaline-earth",6,2);
+
+// Transition metals 72–80
+const p6 = ["Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg"];
+p6.forEach((s,i)=>add(72+i,s,"...","...","transition-metal",6,i+4));
+
+add(81,"Tl","Thallium","...","post-transition",6,13);
+add(82,"Pb","Lead","...","post-transition",6,14);
+add(83,"Bi","Bismuth","...","post-transition",6,15);
+add(84,"Po","Polonium","...","metalloid",6,16);
+add(85,"At","Astatine","...","halogen",6,17);
+add(86,"Rn","Radon","...","noble-gas",6,18);
+
+// Period 7
+add(87,"Fr","Francium","...","alkali-metal",7,1);
+add(88,"Ra","Radium","...","alkaline-earth",7,2);
+
+// Transition metals 104–112
+const p7 = ["Rf","Db","Sg","Bh","Hs","Mt","Ds","Rg","Cn"];
+p7.forEach((s,i)=>add(104+i,s,"...","...","transition-metal",7,i+4));
+
+add(113,"Nh","Nihonium","...","post-transition",7,13);
+add(114,"Fl","Flerovium","...","post-transition",7,14);
+add(115,"Mc","Moscovium","...","post-transition",7,15);
+add(116,"Lv","Livermorium","...","post-transition",7,16);
+add(117,"Ts","Tennessine","...","halogen",7,17);
+add(118,"Og","Oganesson","...","noble-gas",7,18);
+
+// Lanthanides (57–71)
+for(let i=0;i<15;i++){
+  add(57+i,"Ln","Lanthanide","...","lanthanide",9,i+4);
+}
+
+// Actinides (89–103)
+for(let i=0;i<15;i++){
+  add(89+i,"An","Actinide","...","actinide",10,i+4);
+}
+
+/* =========================
+   RENDERING
+========================= */
+
+const grid = document.getElementById('ptable');
+const popup = document.getElementById('popup');
+
+elements.forEach(el => {
+  const div = document.createElement('div');
+  div.className = `element ${el.cat}`;
+  div.style.gridRow = el.row;
+  div.style.gridColumn = el.col;
+
+  div.innerHTML = `
+    <span class="atomic-num">${el.num}</span>
+    <span class="symbol">${el.sym}</span>
+    <span class="element-name">${el.name}</span>
+  `;
+
+  div.onclick = () => {
+    document.getElementById('pop-sym').textContent = el.sym;
+    document.getElementById('pop-name').textContent = el.name;
+    document.getElementById('pop-num').textContent = el.num;
+    document.getElementById('pop-mass').textContent = el.mass;
+    document.getElementById('pop-cat').textContent = el.cat.replace(/-/g,' ');
+    document.getElementById('pop-period').textContent = el.row;
+    document.getElementById('pop-group').textContent = el.col;
+    popup.classList.add('show');
+  };
+
+  grid.appendChild(div);
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.element') && !e.target.closest('.popup')) {
+    popup.classList.remove('show');
+  }
+});
+</script>
+
+</body>
+</html>

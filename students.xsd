@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ============================================================
+     Practical 10 - XSD Schema for Student Details
+     File: students.xsd
+     ============================================================
+     Rules applied:
+     - Root element: student_details
+     - student element has attribute: reg_no (required)
+     - name is grouped in element 'n' with first_name and last_name
+     - phone must match pattern: XXX-XXXX (3 digits, dash, 4 digits)
+     - all fields are required strings
+     ============================================================ -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- ===== ROOT ELEMENT ===== -->
+  <xs:element name="student_details">
+    <xs:complexType>
+      <xs:sequence>
+        <!-- One or more student elements -->
+        <xs:element name="student" type="StudentType" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ===== STUDENT TYPE ===== -->
+  <xs:complexType name="StudentType">
+    <xs:sequence>
+      <!-- Name group (first + last name together) -->
+      <xs:element name="n" type="NameType"/>
+
+      <!-- Department -->
+      <xs:element name="department">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="100"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <!-- Address -->
+      <xs:element name="address">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="5"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <!-- Phone: RESTRICTED to format XXX-XXXX -->
+      <!-- Pattern: exactly 3 digits, hyphen, exactly 4 digits -->
+      <xs:element name="phone" type="PhoneType"/>
+    </xs:sequence>
+
+    <!-- reg_no is an ATTRIBUTE of student element -->
+    <xs:attribute name="reg_no" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- ===== NAME TYPE (grouped first + last) ===== -->
+  <xs:complexType name="NameType">
+    <xs:sequence>
+      <xs:element name="first_name">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="2"/>
+            <xs:maxLength value="50"/>
+            <!-- Only letters and spaces allowed -->
+            <xs:pattern value="[A-Za-z\s]+"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="last_name">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="2"/>
+            <xs:maxLength value="50"/>
+            <xs:pattern value="[A-Za-z\s]+"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===== PHONE TYPE ===== -->
+  <!-- Restriction: format must be XXX-XXXX where X is an integer digit -->
+  <xs:simpleType name="PhoneType">
+    <xs:restriction base="xs:string">
+      <!-- Pattern: \d{3}-\d{4}  = 3 digits, hyphen, 4 digits -->
+      <xs:pattern value="\d{3}-\d{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

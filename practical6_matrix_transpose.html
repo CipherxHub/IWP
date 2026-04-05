@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practical 6 - Matrix Transpose</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0f172a;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    h1 { font-size: 22px; color: #7dd3fc; margin-bottom: 4px; }
+    .subtitle { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+
+    /* Size Inputs */
+    .size-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-end;
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-size: 12px; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; }
+
+    input[type="number"] {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: white;
+      padding: 10px 14px;
+      font-size: 16px;
+      width: 90px;
+      outline: none;
+    }
+
+    input[type="number"]:focus { border-color: #7dd3fc; }
+
+    .gen-btn {
+      background: #0369a1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .gen-btn:hover { opacity: 0.85; }
+
+    /* Matrix Display */
+    .matrices {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .matrix-section { flex: 1; min-width: 200px; }
+
+    .matrix-label {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .matrix-label span {
+      color: #7dd3fc;
+      font-weight: 700;
+    }
+
+    /* Matrix table style */
+    .matrix-table {
+      border-collapse: separate;
+      border-spacing: 4px;
+    }
+
+    .matrix-table td {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* Editable input cells */
+    .cell-input {
+      background: transparent;
+      border: none;
+      color: #7dd3fc;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      width: 46px;
+      height: 42px;
+      outline: none;
+    }
+
+    .cell-input:focus { background: #1e3a5f; border-radius: 4px; }
+
+    /* Display cells (transpose result) */
+    .cell-display {
+      width: 46px;
+      height: 42px;
+      color: #4ade80;
+      line-height: 42px;
+    }
+
+    /* Arrow symbol */
+    .arrow {
+      font-size: 28px;
+      color: #7dd3fc;
+      padding: 0 4px;
+      align-self: center;
+    }
+
+    /* Transpose Button */
+    .transpose-btn {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 28px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      transition: opacity 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .transpose-btn:hover { opacity: 0.88; }
+
+    /* Info row */
+    .info-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .info-chip {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .info-chip span { color: #7dd3fc; font-weight: 700; }
+
+    /* Result hidden until computed */
+    #resultSection { display: none; }
+    #resultSection.show { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🔢 Matrix Transpose</h1>
+  <p class="subtitle">Enter matrix dimensions, fill values, then click Transpose</p>
+
+  <!-- Step 1: Size Input -->
+  <div class="size-row">
+    <div class="form-group">
+      <label>Rows</label>
+      <input type="number" id="rows" value="3" min="1" max="6" />
+    </div>
+    <div class="form-group">
+      <label>Columns</label>
+      <input type="number" id="cols" value="3" min="1" max="6" />
+    </div>
+    <button class="gen-btn" onclick="generateMatrix()">⚙️ Generate Matrix</button>
+  </div>
+
+  <!-- Matrix Input Area -->
+  <div id="inputSection">
+    <div class="matrix-label">Input Matrix — <span id="inputSize">3 × 3</span></div>
+    <table class="matrix-table" id="inputMatrix"></table>
+  </div>
+
+  <!-- Transpose Button -->
+  <button class="transpose-btn" onclick="transposeMatrix()">↕️ Compute Transpose</button>
+
+  <!-- Result Section -->
+  <div id="resultSection">
+    <div class="info-row">
+      <div class="info-chip">Original: <span id="origSize">-</span></div>
+      <div class="info-chip">→ Transposed: <span id="transSize">-</span></div>
+    </div>
+
+    <div class="matrices" style="margin-top:16px;">
+      <div class="matrix-section">
+        <div class="matrix-label">Original Matrix</div>
+        <table class="matrix-table" id="origDisplay"></table>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="matrix-section">
+        <div class="matrix-label">Transposed Matrix</div>
+        <table class="matrix-table" id="transDisplay"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== GENERATE INPUT MATRIX =====
+  function generateMatrix() {
+    const rows = parseInt(document.getElementById('rows').value);
+    const cols = parseInt(document.getElementById('cols').value);
+
+    if (rows < 1 || cols < 1 || rows > 6 || cols > 6) {
+      alert('Please enter dimensions between 1 and 6.');
+      return;
+    }
+
+    document.getElementById('inputSize').textContent = `${rows} × ${cols}`;
+    document.getElementById('resultSection').classList.remove('show');
+
+    const table = document.getElementById('inputMatrix');
+    table.innerHTML = '';
+
+    // Build table with input cells
+    for (let r = 0; r < rows; r++) {
+      const tr = document.createElement('tr');
+      for (let c = 0; c < cols; c++) {
+        const td = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.className = 'cell-input';
+        inp.placeholder = '0';
+        inp.id = `cell_${r}_${c}`;
+
+        // Fill with random values for quick demo (optional)
+        inp.value = Math.floor(Math.random() * 20) - 5;
+
+        td.appendChild(inp);
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+  }
+
+  // ===== TRANSPOSE LOGIC =====
+  function transposeMatrix() {
+    const rows = parseInt(document.getElementById('rows').value);
+    const cols = parseInt(document.getElementById('cols').value);
+
+    // Read matrix values from inputs
+    const matrix = [];
+    for (let r = 0; r < rows; r++) {
+      matrix[r] = [];
+      for (let c = 0; c < cols; c++) {
+        const val = document.getElementById(`cell_${r}_${c}`);
+        if (!val) {
+          alert('Please generate the matrix first!');
+          return;
+        }
+        matrix[r][c] = parseFloat(val.value) || 0;
+      }
+    }
+
+    // ===== COMPUTE TRANSPOSE =====
+    // Transpose[i][j] = Original[j][i]
+    const transposed = [];
+    for (let c = 0; c < cols; c++) {
+      transposed[c] = [];
+      for (let r = 0; r < rows; r++) {
+        transposed[c][r] = matrix[r][c];
+      }
+    }
+
+    // Update size info
+    document.getElementById('origSize').textContent  = `${rows} × ${cols}`;
+    document.getElementById('transSize').textContent = `${cols} × ${rows}`;
+
+    // Render original matrix (read-only)
+    renderDisplay(document.getElementById('origDisplay'),  matrix,     rows,  cols);
+    // Render transposed matrix
+    renderDisplay(document.getElementById('transDisplay'), transposed, cols,  rows);
+
+    document.getElementById('resultSection').classList.add('show');
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ===== RENDER READ-ONLY TABLE =====
+  function renderDisplay(table, data, rows, cols) {
+    table.innerHTML = '';
+    for (let r = 0; r < rows; r++) {
+      const tr = document.createElement('tr');
+      for (let c = 0; c < cols; c++) {
+        const td = document.createElement('td');
+        td.className  = 'cell-display';
+        td.textContent = data[r][c];
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+  }
+
+  // ===== AUTO-GENERATE ON PAGE LOAD =====
+  window.onload = function () {
+    generateMatrix();
+  };
+</script>
+
+</body>
+</html>

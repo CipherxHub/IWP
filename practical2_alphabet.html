@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practical 2 - Alphabet Chart with Image Mapping</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a1a2e;
+      color: white;
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      color: #00d4ff;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    /* ===== ALPHABET GRID ===== */
+    .alphabet-grid {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 8px;
+      max-width: 900px;
+      margin: 0 auto 30px;
+    }
+
+    .letter-cell {
+      background: linear-gradient(135deg, #0f3460, #16213e);
+      border: 2px solid #00d4ff;
+      border-radius: 8px;
+      text-align: center;
+      padding: 14px 8px;
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: bold;
+      color: #00d4ff;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .letter-cell:hover {
+      background: #00d4ff;
+      color: #1a1a2e;
+      transform: scale(1.1);
+    }
+
+    .letter-cell.active {
+      background: #ff2d78;
+      border-color: #ff2d78;
+      color: white;
+      transform: scale(1.15);
+    }
+
+    /* ===== RESULT PANEL ===== */
+    .result-panel {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #16213e;
+      border: 2px solid #00d4ff;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-panel .placeholder {
+      color: #555;
+      font-size: 16px;
+    }
+
+    .word-display {
+      width: 100%;
+    }
+
+    .big-letter {
+      font-size: 72px;
+      font-weight: 900;
+      color: #ff2d78;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(255,45,120,0.5);
+    }
+
+    .example-word {
+      font-size: 28px;
+      font-weight: 600;
+      color: #00d4ff;
+      margin: 8px 0;
+    }
+
+    .word-emoji {
+      font-size: 50px;
+      margin: 10px 0;
+    }
+
+    .phonics {
+      font-size: 16px;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-section {
+      max-width: 900px;
+      margin: 20px auto 0;
+      text-align: center;
+    }
+
+    .progress-bar-wrap {
+      background: #16213e;
+      border-radius: 20px;
+      height: 10px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(to right, #00d4ff, #ff2d78);
+      height: 100%;
+      transition: width 0.3s;
+    }
+
+    .progress-text { font-size: 13px; color: #888; }
+  </style>
+</head>
+<body>
+
+  <h1>🔤 English Alphabet Chart</h1>
+  <p class="subtitle">Click on any letter to see an example word with image mapping</p>
+
+  <!-- Alphabet Grid -->
+  <div class="alphabet-grid" id="alphabetGrid"></div>
+
+  <!-- Result Panel -->
+  <div class="result-panel" id="resultPanel">
+    <p class="placeholder">👆 Click any letter above to see an example</p>
+  </div>
+
+  <!-- Progress Tracker -->
+  <div class="progress-section">
+    <p class="progress-text">Letters explored: <span id="progressCount">0</span> / 26</p>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===== DATA: Each letter has a word and emoji =====
+    const alphabetData = {
+      A: { word: "Apple",    emoji: "🍎", phonics: "/æ/ as in Apple"    },
+      B: { word: "Ball",     emoji: "⚽", phonics: "/b/ as in Ball"     },
+      C: { word: "Cat",      emoji: "🐱", phonics: "/k/ as in Cat"      },
+      D: { word: "Dog",      emoji: "🐶", phonics: "/d/ as in Dog"      },
+      E: { word: "Elephant", emoji: "🐘", phonics: "/ɛ/ as in Elephant" },
+      F: { word: "Fish",     emoji: "🐟", phonics: "/f/ as in Fish"     },
+      G: { word: "Grapes",   emoji: "🍇", phonics: "/ɡ/ as in Grapes"  },
+      H: { word: "Hat",      emoji: "🎩", phonics: "/h/ as in Hat"      },
+      I: { word: "Ice Cream",emoji: "🍦", phonics: "/aɪ/ as in Ice"     },
+      J: { word: "Jug",      emoji: "🫙", phonics: "/dʒ/ as in Jug"    },
+      K: { word: "Kite",     emoji: "🪁", phonics: "/k/ as in Kite"    },
+      L: { word: "Lion",     emoji: "🦁", phonics: "/l/ as in Lion"     },
+      M: { word: "Mango",    emoji: "🥭", phonics: "/m/ as in Mango"    },
+      N: { word: "Nest",     emoji: "🪺", phonics: "/n/ as in Nest"     },
+      O: { word: "Orange",   emoji: "🍊", phonics: "/ɒ/ as in Orange"   },
+      P: { word: "Penguin",  emoji: "🐧", phonics: "/p/ as in Penguin"  },
+      Q: { word: "Queen",    emoji: "👸", phonics: "/kw/ as in Queen"   },
+      R: { word: "Rabbit",   emoji: "🐰", phonics: "/r/ as in Rabbit"   },
+      S: { word: "Sun",      emoji: "☀️", phonics: "/s/ as in Sun"      },
+      T: { word: "Tiger",    emoji: "🐯", phonics: "/t/ as in Tiger"    },
+      U: { word: "Umbrella", emoji: "☂️", phonics: "/ʌ/ as in Umbrella" },
+      V: { word: "Violin",   emoji: "🎻", phonics: "/v/ as in Violin"   },
+      W: { word: "Whale",    emoji: "🐳", phonics: "/w/ as in Whale"    },
+      X: { word: "Xylophone",emoji: "🎵", phonics: "/z/ as in Xylophone"},
+      Y: { word: "Yacht",    emoji: "⛵", phonics: "/j/ as in Yacht"    },
+      Z: { word: "Zebra",    emoji: "🦓", phonics: "/z/ as in Zebra"    }
+    };
+
+    const explored = new Set();
+
+    // ===== BUILD GRID =====
+    const grid = document.getElementById('alphabetGrid');
+
+    Object.keys(alphabetData).forEach(letter => {
+      const cell = document.createElement('div');
+      cell.className = 'letter-cell';
+      cell.textContent = letter;
+      cell.setAttribute('data-letter', letter);
+
+      // Each cell acts as a clickable image map area
+      cell.addEventListener('click', function () {
+        // Remove active from all
+        document.querySelectorAll('.letter-cell').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+
+        showExample(letter);
+      });
+
+      grid.appendChild(cell);
+    });
+
+    // ===== SHOW EXAMPLE =====
+    function showExample(letter) {
+      const data = alphabetData[letter];
+
+      document.getElementById('resultPanel').innerHTML = `
+        <div class="word-display">
+          <div class="big-letter">${letter}</div>
+          <div class="word-emoji">${data.emoji}</div>
+          <div class="example-word">${letter} for <strong>${data.word}</strong></div>
+          <div class="phonics">${data.phonics}</div>
+        </div>
+      `;
+
+      // Track explored letters
+      explored.add(letter);
+      updateProgress();
+    }
+
+    // ===== PROGRESS =====
+    function updateProgress() {
+      const count = explored.size;
+      document.getElementById('progressCount').textContent = count;
+      document.getElementById('progressBar').style.width = (count / 26 * 100) + '%';
+    }
+  </script>
+
+</body>
+</html>

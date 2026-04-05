@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practical 7 - Hospital Registration Form</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1565c0, #0288d1);
+      color: white;
+      border-radius: 14px 14px 0 0;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .header-icon { font-size: 40px; }
+    .header h1   { font-size: 20px; font-weight: 700; }
+    .header p    { font-size: 13px; color: #b3e5fc; margin-top: 2px; }
+
+    /* Form Card */
+    .form-card {
+      background: white;
+      border-radius: 0 0 14px 14px;
+      padding: 32px;
+      max-width: 700px;
+      margin: 0 auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1565c0;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid #e3f2fd;
+      padding-bottom: 8px;
+      margin: 24px 0 16px;
+    }
+
+    .section-title:first-child { margin-top: 0; }
+
+    /* Form Row */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .form-row.single { grid-template-columns: 1fr; }
+    .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+    /* Form Group */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #546e7a;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .form-group label .req { color: #e53935; }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      border: 1.5px solid #cfd8dc;
+      border-radius: 7px;
+      padding: 10px 13px;
+      font-size: 14px;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      background: white;
+    }
+
+    .form-group textarea { resize: vertical; min-height: 70px; }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #1565c0;
+      box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
+    }
+
+    /* Validation states */
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+      border-color: #e53935;
+      background: #fff5f5;
+    }
+
+    .form-group input.valid,
+    .form-group select.valid,
+    .form-group textarea.valid {
+      border-color: #43a047;
+      background: #f1fff1;
+    }
+
+    .error-msg {
+      font-size: 11px;
+      color: #e53935;
+      margin-top: 4px;
+      min-height: 15px;
+    }
+
+    /* Radio / Checkbox groups */
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #333;
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+    }
+
+    .radio-group input { width: auto; padding: 0; border: none; }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #1565c0, #0288d1);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: opacity 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .submit-btn:hover { opacity: 0.9; }
+
+    /* Success Banner */
+    .success-banner {
+      display: none;
+      background: #e8f5e9;
+      border: 2px solid #43a047;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-top: 20px;
+      color: #1b5e20;
+      font-size: 15px;
+    }
+
+    .success-banner.show { display: block; }
+    .success-banner h3 { font-size: 17px; margin-bottom: 8px; }
+
+    .patient-id {
+      font-size: 24px;
+      font-weight: 900;
+      color: #1565c0;
+      letter-spacing: 2px;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">🏥</div>
+    <div>
+      <h1>City General Hospital</h1>
+      <p>Patient Registration Form — Please fill all required fields</p>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+
+    <!-- Section 1: Personal Info -->
+    <div class="section-title">👤 Personal Information</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>First Name <span class="req">*</span></label>
+        <input type="text" id="firstName" placeholder="John" />
+        <span class="error-msg" id="firstNameErr"></span>
+      </div>
+      <div class="form-group">
+        <label>Last Name <span class="req">*</span></label>
+        <input type="text" id="lastName" placeholder="Doe" />
+        <span class="error-msg" id="lastNameErr"></span>
+      </div>
+    </div>
+
+    <div class="form-row triple">
+      <div class="form-group">
+        <label>Date of Birth <span class="req">*</span></label>
+        <input type="date" id="dob" />
+        <span class="error-msg" id="dobErr"></span>
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <input type="text" id="age" placeholder="Auto" readonly style="background:#f5f5f5;" />
+      </div>
+      <div class="form-group">
+        <label>Blood Group <span class="req">*</span></label>
+        <select id="bloodGroup">
+          <option value="">-- Select --</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option>
+          <option>O+</option><option>O-</option>
+        </select>
+        <span class="error-msg" id="bloodGroupErr"></span>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label>Gender <span class="req">*</span></label>
+      <div class="radio-group" id="genderGroup">
+        <label><input type="radio" name="gender" value="Male" />   Male</label>
+        <label><input type="radio" name="gender" value="Female" /> Female</label>
+        <label><input type="radio" name="gender" value="Other" />  Other</label>
+      </div>
+      <span class="error-msg" id="genderErr"></span>
+    </div>
+
+    <!-- Section 2: Contact -->
+    <div class="section-title">📞 Contact Details</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Mobile Number <span class="req">*</span></label>
+        <input type="tel" id="mobile" placeholder="10-digit number" maxlength="10" />
+        <span class="error-msg" id="mobileErr"></span>
+      </div>
+      <div class="form-group">
+        <label>Email Address <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="john@example.com" />
+        <span class="error-msg" id="emailErr"></span>
+      </div>
+    </div>
+
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Home Address <span class="req">*</span></label>
+        <textarea id="address" placeholder="House No., Street, City, State, PIN"></textarea>
+        <span class="error-msg" id="addressErr"></span>
+      </div>
+    </div>
+
+    <!-- Section 3: Emergency -->
+    <div class="section-title">🚨 Emergency Contact</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Contact Person Name <span class="req">*</span></label>
+        <input type="text" id="emergencyName" placeholder="Relative / Guardian name" />
+        <span class="error-msg" id="emergencyNameErr"></span>
+      </div>
+      <div class="form-group">
+        <label>Emergency Mobile <span class="req">*</span></label>
+        <input type="tel" id="emergencyMobile" placeholder="10-digit number" maxlength="10" />
+        <span class="error-msg" id="emergencyMobileErr"></span>
+      </div>
+    </div>
+
+    <!-- Section 4: Medical -->
+    <div class="section-title">💊 Medical Information</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Department <span class="req">*</span></label>
+        <select id="department">
+          <option value="">-- Select Department --</option>
+          <option>General Medicine</option>
+          <option>Cardiology</option>
+          <option>Orthopedics</option>
+          <option>Neurology</option>
+          <option>Pediatrics</option>
+          <option>Gynecology</option>
+          <option>Dermatology</option>
+          <option>ENT</option>
+          <option>Ophthalmology</option>
+          <option>Emergency</option>
+        </select>
+        <span class="error-msg" id="departmentErr"></span>
+      </div>
+      <div class="form-group">
+        <label>Appointment Date <span class="req">*</span></label>
+        <input type="date" id="appointmentDate" />
+        <span class="error-msg" id="appointmentDateErr"></span>
+      </div>
+    </div>
+
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Chief Complaint / Symptoms</label>
+        <textarea id="symptoms" placeholder="Briefly describe symptoms or reason for visit..."></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="submit-btn" onclick="validateForm()">📋 Register Patient</button>
+
+    <!-- Success -->
+    <div class="success-banner" id="successBanner">
+      <h3>✅ Registration Successful!</h3>
+      <p>Your Patient ID is:</p>
+      <div class="patient-id" id="patientId">PAT-XXXXXX</div>
+      <p id="summaryText"></p>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== AUTO-CALCULATE AGE FROM DOB =====
+    document.getElementById('dob').addEventListener('change', function () {
+      const dob  = new Date(this.value);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+      document.getElementById('age').value = age > 0 ? age + ' years' : '';
+    });
+
+    // ===== SET MIN DATE FOR APPOINTMENT =====
+    document.getElementById('appointmentDate').min = new Date().toISOString().split('T')[0];
+
+    // ===== VALIDATION RULES =====
+    const nameRegex   = /^[A-Za-z\s]{2,50}$/;
+    const mobileRegex = /^[6-9]\d{9}$/;         // Indian 10-digit mobile
+    const emailRegex  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function setField(id, isValid, msg = '') {
+      const el  = document.getElementById(id);
+      const err = document.getElementById(id + 'Err');
+      if (el) {
+        el.className = isValid ? 'valid' : 'error';
+      }
+      if (err) err.textContent = isValid ? '' : msg;
+      return isValid;
+    }
+
+    // ===== MAIN VALIDATION FUNCTION =====
+    function validateForm() {
+      let valid = true;
+
+      // First Name
+      const fn = document.getElementById('firstName').value.trim();
+      if (!nameRegex.test(fn))
+        valid = setField('firstName', false, 'Enter a valid first name (letters only, 2–50 chars)') && valid;
+      else setField('firstName', true);
+
+      // Last Name
+      const ln = document.getElementById('lastName').value.trim();
+      if (!nameRegex.test(ln))
+        valid = setField('lastName', false, 'Enter a valid last name (letters only, 2–50 chars)') && valid;
+      else setField('lastName', true);
+
+      // DOB
+      const dob = document.getElementById('dob').value;
+      if (!dob)
+        valid = setField('dob', false, 'Date of birth is required') && valid;
+      else {
+        const age = new Date() - new Date(dob);
+        if (age < 0)
+          valid = setField('dob', false, 'Date of birth cannot be in the future') && valid;
+        else setField('dob', true);
+      }
+
+      // Blood Group
+      if (!document.getElementById('bloodGroup').value)
+        valid = setField('bloodGroup', false, 'Please select blood group') && valid;
+      else setField('bloodGroup', true);
+
+      // Gender
+      const gender = document.querySelector('input[name="gender"]:checked');
+      const genderErr = document.getElementById('genderErr');
+      if (!gender) {
+        genderErr.textContent = 'Please select gender';
+        valid = false;
+      } else {
+        genderErr.textContent = '';
+      }
+
+      // Mobile
+      const mob = document.getElementById('mobile').value.trim();
+      if (!mobileRegex.test(mob))
+        valid = setField('mobile', false, 'Enter valid 10-digit Indian mobile number (starts with 6–9)') && valid;
+      else setField('mobile', true);
+
+      // Email
+      const email = document.getElementById('email').value.trim();
+      if (!emailRegex.test(email))
+        valid = setField('email', false, 'Enter a valid email address') && valid;
+      else setField('email', true);
+
+      // Address
+      const addr = document.getElementById('address').value.trim();
+      if (addr.length < 10)
+        valid = setField('address', false, 'Please enter a complete address (min 10 characters)') && valid;
+      else setField('address', true);
+
+      // Emergency Name
+      const en = document.getElementById('emergencyName').value.trim();
+      if (!nameRegex.test(en))
+        valid = setField('emergencyName', false, 'Enter emergency contact name') && valid;
+      else setField('emergencyName', true);
+
+      // Emergency Mobile
+      const em = document.getElementById('emergencyMobile').value.trim();
+      if (!mobileRegex.test(em))
+        valid = setField('emergencyMobile', false, 'Enter valid 10-digit emergency mobile') && valid;
+      else setField('emergencyMobile', true);
+
+      // Department
+      if (!document.getElementById('department').value)
+        valid = setField('department', false, 'Please select a department') && valid;
+      else setField('department', true);
+
+      // Appointment Date
+      const apDate = document.getElementById('appointmentDate').value;
+      if (!apDate)
+        valid = setField('appointmentDate', false, 'Please select appointment date') && valid;
+      else setField('appointmentDate', true);
+
+      // ===== SHOW SUCCESS IF ALL VALID =====
+      if (valid) {
+        const pid = 'PAT-' + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('patientId').textContent = pid;
+        document.getElementById('summaryText').textContent =
+          `Welcome, ${fn} ${ln}! Your appointment for ${document.getElementById('department').value} is on ${apDate}.`;
+        document.getElementById('successBanner').classList.add('show');
+        document.getElementById('successBanner').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
+
+</body>
+</html>
