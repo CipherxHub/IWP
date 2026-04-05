@@ -67,38 +67,20 @@ Each practical is:
 
 ## 📸 Screenshots
 
-> *(Add your screenshots inside a `/screenshots` folder in the repo)*
-
 ### 🧾 IRCTC Page
-
-```md id="img1"
 ![IRCTC](screenshots/irctc.png)
-```
 
 ### 🔤 Alphabet App
-
-```md id="img2"
 ![Alphabet](screenshots/alphabet.png)
-```
 
 ### 🧪 Periodic Table
-
-```md id="img3"
 ![Periodic Table](screenshots/periodic_table.png)
-```
 
 ### 🎮 Tic Tac Toe
-
-```md id="img4"
 ![TicTacToe](screenshots/tictactoe.png)
-```
 
 ### 📚 ISBN Validator
-
-```md id="img5"
 ![ISBN](screenshots/isbn.png)
-```
-
 ---
 
 ## ⚙️ Setup & Execution
@@ -192,7 +174,6 @@ perl practical11_perl_arrays.pl
 
 ## 👤 Author
 
-**Your Name**
 GitHub: https://github.com/CipherxHub
 
 ---
