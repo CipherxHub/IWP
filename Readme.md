@@ -174,7 +174,7 @@ perl practical11_perl_arrays.pl
 
 ## 👤 Author
 
-GitHub: https://github.com/CipherxHub
+[CipherxHub](https://github.com/CipherxHub)
 
 ---
 
