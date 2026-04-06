@@ -1,4 +1,4 @@
-# 🚀 Web Technology Practicals
+#  Web Technology Practicals
 
 ![HTML](https://img.shields.io/badge/HTML-5-orange)
 ![CSS](https://img.shields.io/badge/CSS-3-blue)
@@ -13,7 +13,7 @@ A complete collection of **11 Web Technology Practicals** covering frontend, bac
 
 ---
 
-## 📌 Table of Contents
+##  Table of Contents
 
 * [Overview](#-overview)
 * [Tech Stack](#-tech-stack)
@@ -25,7 +25,7 @@ A complete collection of **11 Web Technology Practicals** covering frontend, bac
 
 ---
 
-## 📖 Overview
+##  Overview
 
 This repository is designed for students and beginners to understand core web development concepts through hands-on practicals.
 
@@ -37,7 +37,7 @@ Each practical is:
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 * **Frontend:** HTML, CSS, JavaScript
 * **Backend:** PHP
@@ -47,7 +47,7 @@ Each practical is:
 
 ---
 
-## 📂 Practicals List
+## Practicals List
 
 | #  | Practical        | Description            |
 | -- | ---------------- | ---------------------- |
@@ -65,27 +65,27 @@ Each practical is:
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
-### 🧾 IRCTC Page
+### IRCTC Page
 ![IRCTC](screenshots/irctc.png)
 
-### 🔤 Alphabet App
+### Alphabet App
 ![Alphabet](screenshots/alphabet.png)
 
-### 🧪 Periodic Table
+### Periodic Table
 ![Periodic Table](screenshots/periodic_table.png)
 
-### 🎮 Tic Tac Toe
+### Tic Tac Toe
 ![TicTacToe](screenshots/tictactoe.png)
 
-### 📚 ISBN Validator
+### ISBN Validator
 ![ISBN](screenshots/isbn.png)
 ---
 
-## ⚙️ Setup & Execution
+## Setup & Execution
 
-### 🌐 HTML / JS / CSS (P1–P7)
+### HTML / JS / CSS (P1–P7)
 
 Open directly in browser:
 
@@ -105,7 +105,7 @@ Open: `http://localhost:8000`
 
 ---
 
-### 🧠 PHP Quiz App (P9)
+### PHP Quiz App (P9)
 
 1. Open **phpMyAdmin**
 2. Copy SQL from the file
@@ -118,7 +118,7 @@ php -S localhost:8000
 
 ---
 
-### 📄 XML + XSD (P10)
+### XML + XSD (P10)
 
 Ensure all files are together:
 
@@ -130,7 +130,7 @@ Then open HTML file.
 
 ---
 
-### 🐪 Perl Script (P11)
+### Perl Script (P11)
 
 ```bash id="run4"
 perl practical11_perl_arrays.pl
@@ -138,7 +138,7 @@ perl practical11_perl_arrays.pl
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 * ✔️ Form validation using JavaScript
 * ✔️ Game development logic
@@ -150,7 +150,7 @@ perl practical11_perl_arrays.pl
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```bash id="tree"
 .
@@ -172,13 +172,13 @@ perl practical11_perl_arrays.pl
 
 ---
 
-## 👤 Author
+## Author
 
 [CipherxHub](https://github.com/CipherxHub)
 
 ---
 
-## ⭐ Show Your Support
+## Show Your Support
 
 If you found this useful, please ⭐ the repository and share it.
 
